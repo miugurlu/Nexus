@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import FirebaseCore
 
 @main
 struct NexusApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginView()
         }
     }
 }

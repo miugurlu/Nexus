@@ -1,20 +1,21 @@
 //
-//  LoginView.swift
+//  Colors.swift
 //  Nexus
 //
-//  Created by İbrahim Uğurlu on 28.05.2025.
+//  Created by İbrahim Uğurlu on 30.05.2025.
 //
 
 import SwiftUI
 import FirebaseAuth
 
-struct LoginView: View {
+struct SignUpView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var email: String = ""
     @State private var password: String = ""
+    @State private var confirmPassword: String = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
-    @State private var isLoggedIn = false
-    @State private var showSignUp = false
+    @State private var isRegistered = false
     
     var body: some View {
         NavigationStack {
@@ -27,11 +28,11 @@ struct LoginView: View {
                 
                 VStack(spacing: 20) {
                     VStack(spacing: 10) {
-                        Text("Nexus")
+                        Text("Create Account")
                             .font(.system(size: 40, weight: .bold))
                             .foregroundColor(.primary)
                         
-                        Text("Welcome Back!")
+                        Text("Join Nexus Today!")
                             .font(.title2)
                             .foregroundColor(.secondary)
                     }
@@ -51,12 +52,20 @@ struct LoginView: View {
                             .padding()
                             .background(Color.white)
                             .cornerRadius(25)
+                            .textContentType(.newPassword)
+                            .disableAutocorrection(true)
+                            .padding(.horizontal)
+                        
+                        SecureField("Confirm Password", text: $confirmPassword)
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(25)
                             .textContentType(.password)
                             .padding(.horizontal)
                     }
                     
                     Button(action: {
-                        showSignUp = true
+                        register()
                     }) {
                         Text("Sign Up")
                             .font(.headline)
@@ -68,53 +77,42 @@ struct LoginView: View {
                     }
                     .padding(.horizontal)
                     
-                    Button(action: {
-                        login()
-                    }) {
-                        Text("Log In")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                            .background(Color.brown1)
-                            .cornerRadius(25)
-                    }
-                    .padding(.horizontal)
-                    
-                    Button("Forgot Password?") {
-                    }
-                    .foregroundColor(.brown2)
-                    
                     Spacer()
                 }
             }
             .alert("Message", isPresented: $showAlert) {
-                Button("OK", role: .cancel) { }
+                Button("OK", role: .cancel) {
+                    if isRegistered {
+                        dismiss()
+                    }
+                }
             } message: {
                 Text(alertMessage)
             }
-            .navigationDestination(isPresented: $isLoggedIn) {
-                ContentView()
-            }
-            .navigationDestination(isPresented: $showSignUp) {
-                SignUpView()
-            }
-            .navigationBarBackButtonHidden(true)
+            .navigationBarBackButtonHidden(false)
         }
     }
     
-    func login() {
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+    func register() {
+        guard password == confirmPassword else {
+            alertMessage = "Passwords do not match!"
+            showAlert = true
+            return
+        }
+        
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error {
                 alertMessage = error.localizedDescription
                 showAlert = true
             } else {
-                isLoggedIn = true
+                alertMessage = "Successfully registered user!"
+                isRegistered = true
+                showAlert = true
             }
         }
     }
 }
 
 #Preview {
-    LoginView()
-}
+    SignUpView()
+} 
