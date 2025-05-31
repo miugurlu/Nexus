@@ -20,28 +20,25 @@ struct SignUpView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(stops: [
-                    .init(color: .yellow2, location: 0.30),
-                    .init(color: .white, location: 0.70),
-                ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                    .ignoresSafeArea()
+                // Custom ana arka plan
+                Color.clear.mainBackground()
                 
                 VStack(spacing: 20) {
                     VStack(spacing: 10) {
                         Text("Create Account")
-                            .font(.system(size: 40, weight: .bold))
-                            .foregroundColor(.primary)
+                            .font(.titleLarge)
+                            .foregroundColor(.textPrimary)
                         
                         Text("Join Nexus Today!")
-                            .font(.title2)
-                            .foregroundColor(.secondary)
+                            .font(.titleMedium)
+                            .foregroundColor(.textSecondary)
                     }
                     .padding(.top, 50)
                     
                     VStack(spacing: 20) {
                         TextField("E-Mail", text: $email)
                             .padding()
-                            .background(Color.white)
+                            .background(Color.backgroundSecondary)
                             .cornerRadius(25)
                             .textContentType(.emailAddress)
                             .keyboardType(.emailAddress)
@@ -50,7 +47,7 @@ struct SignUpView: View {
                         
                         SecureField("Password", text: $password)
                             .padding()
-                            .background(Color.white)
+                            .background(Color.backgroundSecondary)
                             .cornerRadius(25)
                             .textContentType(.newPassword)
                             .disableAutocorrection(true)
@@ -58,7 +55,7 @@ struct SignUpView: View {
                         
                         SecureField("Confirm Password", text: $confirmPassword)
                             .padding()
-                            .background(Color.white)
+                            .background(Color.backgroundSecondary)
                             .cornerRadius(25)
                             .textContentType(.password)
                             .padding(.horizontal)
@@ -68,13 +65,8 @@ struct SignUpView: View {
                         register()
                     }) {
                         Text("Sign Up")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                            .background(Color.brown1)
-                            .cornerRadius(25)
                     }
+                    .buttonStyle(MainButtonStyle())
                     .padding(.horizontal)
                     
                     Spacer()

@@ -19,28 +19,24 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(stops: [
-                    .init(color: .yellow2, location: 0.30),
-                    .init(color: .white, location: 0.70),
-                ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                    .ignoresSafeArea()
+                Color.clear.mainBackground()
                 
                 VStack(spacing: 20) {
                     VStack(spacing: 10) {
                         Text("Nexus")
-                            .font(.system(size: 40, weight: .bold))
-                            .foregroundColor(.primary)
+                            .font(.titleLarge)
+                            .foregroundColor(.textPrimary)
                         
                         Text("Welcome Back!")
-                            .font(.title2)
-                            .foregroundColor(.secondary)
+                            .font(.titleMedium)
+                            .foregroundColor(.textSecondary)
                     }
                     .padding(.top, 50)
                     
                     VStack(spacing: 20) {
                         TextField("E-Mail", text: $email)
                             .padding()
-                            .background(Color.white)
+                            .background(Color.backgroundSecondary)
                             .cornerRadius(25)
                             .textContentType(.emailAddress)
                             .keyboardType(.emailAddress)
@@ -49,7 +45,7 @@ struct LoginView: View {
                         
                         SecureField("Password", text: $password)
                             .padding()
-                            .background(Color.white)
+                            .background(Color.backgroundSecondary)
                             .cornerRadius(25)
                             .textContentType(.password)
                             .padding(.horizontal)
@@ -59,31 +55,21 @@ struct LoginView: View {
                         showSignUp = true
                     }) {
                         Text("Sign Up")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                            .background(Color.brown1)
-                            .cornerRadius(25)
                     }
+                    .buttonStyle(MainButtonStyle())
                     .padding(.horizontal)
                     
                     Button(action: {
                         login()
                     }) {
                         Text("Log In")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 50)
-                            .background(Color.brown1)
-                            .cornerRadius(25)
                     }
+                    .buttonStyle(MainButtonStyle())
                     .padding(.horizontal)
                     
                     Button("Forgot Password?") {
                     }
-                    .foregroundColor(.brown2)
+                    .foregroundColor(.buttonBrown)
                     
                     Spacer()
                 }
@@ -94,7 +80,7 @@ struct LoginView: View {
                 Text(alertMessage)
             }
             .navigationDestination(isPresented: $isLoggedIn) {
-                ContentView()
+                HomePage()
             }
             .navigationDestination(isPresented: $showSignUp) {
                 SignUpView()
