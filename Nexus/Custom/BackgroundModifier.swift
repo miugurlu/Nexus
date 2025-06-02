@@ -8,11 +8,15 @@
 import SwiftUI
 
 struct MainBackground: ViewModifier {
+    @Environment(\.colorScheme) var colorScheme
+
     func body(content: Content) -> some View {
         content
             .background(
                 LinearGradient(
-                    colors: [.backgroundPrimary, .backgroundSecondary],
+                    colors: colorScheme == .dark
+                        ? [Color("darkBackground1"), Color("darkBackground2")]
+                    : [Color("lightBackground1"), Color("lightBackground2")],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )

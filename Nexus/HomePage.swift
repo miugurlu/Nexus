@@ -84,14 +84,26 @@ struct HomePage: View {
                             .font(.titleLarge)
                             .foregroundColor(.textPrimary)
                             .padding()
+                        
                     case .profile:
-                        Text("Profile Page")
-                            .font(.titleLarge)
-                            .foregroundColor(.textPrimary)
-                            .padding()
+                        VStack(alignment: .leading) {
+                            Text("Profile")
+                                .font(.titleLarge)
+                                .foregroundColor(.textPrimary)
+                                .padding(.horizontal)
+                            ProfilePage()
+                                .padding(.top, 0)
+                        }
+                        
                     case .payment:
-                        PaymentPage()
-                            .padding(.top, -16)
+                        VStack(alignment: .leading) {
+                            Text("Payment")
+                                .font(.titleLarge)
+                                .foregroundColor(.textPrimary)
+                                .padding(.horizontal)
+                            PaymentPage()
+                                .padding(.top, 0)
+                        }
                     }
                 }
                 Spacer()
@@ -116,6 +128,7 @@ struct HomePage: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 

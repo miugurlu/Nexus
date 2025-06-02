@@ -11,10 +11,12 @@ import FirebaseCore
 @main
 struct NexusApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @AppStorage("isDarkMode") private var isDarkMode: Bool = false
     
     var body: some Scene {
         WindowGroup {
             LoginView()
+                .preferredColorScheme(isDarkMode ? .dark : .light)
         }
     }
 }

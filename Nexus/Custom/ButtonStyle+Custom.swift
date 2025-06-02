@@ -13,7 +13,7 @@ struct MainButtonStyle: ButtonStyle {
             .font(.button)
             .foregroundColor(.white)
             .frame(maxWidth: .infinity, minHeight: 50)
-            .background(Color.buttonYellow)
+            .background(Color("pYellow"))
             .cornerRadius(25)
             .opacity(configuration.isPressed ? 0.8 : 1.0)
     }

@@ -25,16 +25,17 @@ struct LoginView: View {
                     VStack(spacing: 10) {
                         Text("Nexus")
                             .font(.titleLarge)
-                            .foregroundColor(.textPrimary)
+                            .foregroundColor(.pYellow)
                         
                         Text("Welcome Back!")
                             .font(.titleMedium)
-                            .foregroundColor(.textSecondary)
+                            .foregroundColor(.pYellow)
                     }
                     .padding(.top, 50)
                     
                     VStack(spacing: 20) {
-                        TextField("E-Mail", text: $email)
+                        TextField("", text: $email, prompt:Text("E-Mail").foregroundColor(.placeholderGrey))
+                        
                             .padding()
                             .background(Color.backgroundSecondary)
                             .cornerRadius(25)
@@ -43,7 +44,7 @@ struct LoginView: View {
                             .autocapitalization(.none)
                             .padding(.horizontal)
                         
-                        SecureField("Password", text: $password)
+                        SecureField("", text: $password, prompt:Text("Password").foregroundColor(.placeholderGrey))
                             .padding()
                             .background(Color.backgroundSecondary)
                             .cornerRadius(25)
@@ -69,7 +70,8 @@ struct LoginView: View {
                     
                     Button("Forgot Password?") {
                     }
-                    .foregroundColor(.buttonBrown)
+                    .foregroundColor(.thinBrown)
+                    .bold()
                     
                     Spacer()
                 }

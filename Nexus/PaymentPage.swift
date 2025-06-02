@@ -62,7 +62,6 @@ struct PaymentPage: View {
                 }
                 .padding()
             }
-            .navigationTitle("Payment")
         }
     }
 }
