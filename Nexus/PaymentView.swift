@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PaymentPage: View {
+struct PaymentView: View {
     var body: some View {
         ZStack {
             Color.clear.mainBackground()
@@ -67,6 +67,6 @@ struct PaymentPage: View {
 }
 
 #Preview {
-    PaymentPage()
+    PaymentView()
 }
 
