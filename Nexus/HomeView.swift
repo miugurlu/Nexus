@@ -11,12 +11,14 @@ enum MenuOption: String, CaseIterable, Identifiable {
     case home = "Home"
     case profile = "Profile"
     case payment = "Payment"
+    case files = "Files"
     var id: String { self.rawValue }
     var icon: String {
         switch self {
         case .home: return "house"
         case .profile: return "person"
         case .payment: return "creditcard"
+        case .files: return "doc"
         }
     }
 }
@@ -40,7 +42,7 @@ struct SideMenu: View {
                         Text(option.rawValue)
                             .font(.titleMedium)
                     }
-                    .foregroundColor(selected == option ? .textSecondary : .textPrimary)
+                    .foregroundColor(.pYellow)
                 }
             }
             Spacer()
@@ -53,12 +55,14 @@ struct SideMenu: View {
     }
 }
 
-struct HomePage: View {
+struct HomeView: View {
     @State private var showMenu = false
     @State private var selected: MenuOption = .home
 
     var body: some View {
         ZStack {
+            Color.clear.mainBackground()
+
             // Main Content
             VStack(alignment: .leading) {
                 HStack {
@@ -70,7 +74,7 @@ struct HomePage: View {
                         Image(systemName: "line.horizontal.3")
                             .resizable()
                             .frame(width: 28, height: 22)
-                            .foregroundColor(.textPrimary)
+                            .foregroundColor(.pYellow)
                     }
                     Spacer()
                 }
@@ -82,16 +86,16 @@ struct HomePage: View {
                     case .home:
                         Text("Welcome to Home Page!")
                             .font(.titleLarge)
-                            .foregroundColor(.textPrimary)
+                            .foregroundColor(.pYellow)
                             .padding()
                         
                     case .profile:
                         VStack(alignment: .leading) {
                             Text("Profile")
                                 .font(.titleLarge)
-                                .foregroundColor(.textPrimary)
+                                .foregroundColor(.pYellow)
                                 .padding(.horizontal)
-                            ProfilePage()
+                            ProfileView()
                                 .padding(.top, 0)
                         }
                         
@@ -99,9 +103,19 @@ struct HomePage: View {
                         VStack(alignment: .leading) {
                             Text("Payment")
                                 .font(.titleLarge)
-                                .foregroundColor(.textPrimary)
+                                .foregroundColor(.pYellow)
                                 .padding(.horizontal)
-                            PaymentPage()
+                            PaymentView()
+                                .padding(.top, 0)
+                        }
+                        
+                    case .files:
+                        VStack(alignment: .leading) {
+                            Text("Files")
+                                .font(.titleLarge)
+                                .foregroundColor(.pYellow)
+                                .padding(.horizontal)
+                            FilesView()
                                 .padding(.top, 0)
                         }
                     }
@@ -133,5 +147,5 @@ struct HomePage: View {
 }
 
 #Preview {
-    HomePage()
+    HomeView()
 }

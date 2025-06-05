@@ -37,7 +37,7 @@ struct LoginView: View {
                         TextField("", text: $email, prompt:Text("E-Mail").foregroundColor(.placeholderGrey))
                         
                             .padding()
-                            .background(Color.backgroundSecondary)
+                            .background(Color.white)
                             .cornerRadius(25)
                             .textContentType(.emailAddress)
                             .keyboardType(.emailAddress)
@@ -46,7 +46,7 @@ struct LoginView: View {
                         
                         SecureField("", text: $password, prompt:Text("Password").foregroundColor(.placeholderGrey))
                             .padding()
-                            .background(Color.backgroundSecondary)
+                            .background(Color.white)
                             .cornerRadius(25)
                             .textContentType(.password)
                             .padding(.horizontal)
@@ -70,7 +70,7 @@ struct LoginView: View {
                     
                     Button("Forgot Password?") {
                     }
-                    .foregroundColor(.thinBrown)
+                    .foregroundColor(.pYellow)
                     .bold()
                     
                     Spacer()
@@ -82,7 +82,7 @@ struct LoginView: View {
                 Text(alertMessage)
             }
             .navigationDestination(isPresented: $isLoggedIn) {
-                HomePage()
+                HomeView()
             }
             .navigationDestination(isPresented: $showSignUp) {
                 SignUpView()

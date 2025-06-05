@@ -20,7 +20,7 @@ struct PaymentView: View {
                             .font(.titleMedium)
                         Text("Premium (text)")
                             .font(.titleLarge)
-                            .foregroundColor(.modernBrown)
+                            .foregroundColor(.pYellow)
                     }
                     Divider()
                     

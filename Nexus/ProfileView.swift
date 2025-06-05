@@ -8,7 +8,7 @@
 import SwiftUI
 import FirebaseAuth
 
-struct ProfilePage: View {
+struct ProfileView: View {
     @State private var displayName: String = ""
     @State private var email: String = ""
     @State private var showPasswordChange: Bool = false
@@ -41,7 +41,7 @@ struct ProfilePage: View {
                             Button("Change Password") {
                                 showPasswordChange = true
                             }
-                            .buttonStyle(.bordered)
+                            .buttonStyle(SmallButtonStyle())
                             .sheet(isPresented: $showPasswordChange) {
                                 PasswordChangeView()
                             }
@@ -52,22 +52,21 @@ struct ProfilePage: View {
                     // Bildirim Ayarları
                     SectionHeader("Notification Settings")
                     VStack(spacing: 8) {
-                        Toggle("Push Notifications", isOn: $pushNotifications)
-                        Toggle("E-Mail Notifications", isOn: $emailNotifications)
+                        Toggle("Push Notifications", isOn: $pushNotifications).bold().tint(.pYellow)
+                        Toggle("E-Mail Notifications", isOn: $emailNotifications).bold().tint(.pYellow)
                     }
                     Divider()
                     // Tema Seçimi
                     SectionHeader("Application Theme")
                     HStack{
-                        Text("Theme Selection")
+                        Text("Theme Selection").bold()
                         Spacer()
                         Picker("Theme", selection: $isDarkMode) {
-                            Image(systemName: "sun.max.fill").tag(false).foregroundColor(.pYellow)
-                            Image(systemName: "moon.fill").tag(true).foregroundColor(.red)
+                            Image(systemName: "sun.max.fill").tag(false)
+                            Image(systemName: "moon.fill").tag(true)
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .frame(width: 100)
-                        .tint(.pYellow)
                     }
                     
                     Divider()
@@ -83,7 +82,7 @@ struct ProfilePage: View {
                             Spacer()
                         }
                         .padding()
-                        .background(Color.red)
+                        .background(Color.pYellow)
                         .cornerRadius(10)
                     }
                 }
@@ -91,8 +90,9 @@ struct ProfilePage: View {
                 .padding()
                 .onAppear {
                     if let user = Auth.auth().currentUser {
-                        displayName = user.displayName ?? ""
-                        email = user.email ?? ""
+                        print("Kullanıcı: \(user)")
+                        displayName = user.displayName ?? "No Name"
+                        email = user.email ?? "No Email"
                     }
                 }
             }
@@ -233,5 +233,5 @@ struct PasswordChangeView: View {
 }
 
 #Preview {
-    ProfilePage()
+    ProfileView()
 }
