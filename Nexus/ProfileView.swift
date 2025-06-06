@@ -1,5 +1,5 @@
 //
-//  ProfilePage.swift
+//  ProfileView.swift
 //  Nexus
 //
 //  Created by İbrahim Uğurlu on 1.06.2025.

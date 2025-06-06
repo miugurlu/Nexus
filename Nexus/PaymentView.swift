@@ -1,5 +1,5 @@
 //
-//  PaymentPage.swift
+//  PaymentView.swift
 //  Nexus
 //
 //  Created by İbrahim Uğurlu on 31.05.2025.
@@ -7,7 +7,14 @@
 
 import SwiftUI
 
+enum Plan: String, CaseIterable {
+    case free = "Free"
+    case personal = "Personal"
+    case premium = "Premium"
+}
+
 struct PaymentView: View {
+    @State private var selectedPlan: Plan = .premium
     var body: some View {
         ZStack {
             Color.clear.mainBackground()
@@ -18,7 +25,7 @@ struct PaymentView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Current Plan")
                             .font(.titleMedium)
-                        Text("Premium (text)")
+                        Text(selectedPlan.rawValue)
                             .font(.titleLarge)
                             .foregroundColor(.pYellow)
                     }
@@ -29,19 +36,19 @@ struct PaymentView: View {
                         Text("Change Plan")
                             .font(.titleMedium)
                         HStack(spacing: 16) {
-                            Button("Free") { }
+                            ForEach(Plan.allCases, id: \.self) { plan in
+                                Button(plan.rawValue) {
+                                    selectedPlan = plan
+                                }
                                 .buttonStyle(MainButtonStyle())
-                            Button("Personal") { }
-                                .buttonStyle(MainButtonStyle())
-                            Button("Premium") { }
-                                .buttonStyle(MainButtonStyle())
+                            }
                         }
                     }
                     Divider()
                     
                     
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Payment Methods")
+                        Text("Payment Methods (not working)")
                             .font(.titleMedium)
                         HStack {
                             Image(systemName: "creditcard")

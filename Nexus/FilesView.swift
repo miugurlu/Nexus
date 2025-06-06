@@ -22,7 +22,7 @@ struct FilesView: View {
         NavigationView {
             VStack {
                 Button(action: { isShowingFilePicker = true }) {
-                    Label("PDF Yükle", systemImage: "plus")
+                    Label("Add Files", systemImage: "plus")
                         .font(.headline)
                         .padding()
                         .frame(maxWidth: .infinity)
@@ -33,12 +33,12 @@ struct FilesView: View {
                 }
                 .padding(.top)
                 if isUploading {
-                    ProgressView("Yükleniyor...")
+                    ProgressView("Downloading...")
                         .padding()
                 }
                 if firebaseManager.files.isEmpty && !isUploading {
                     Spacer()
-                    Text("Henüz dosya yüklemediniz.")
+                    Text("You haven't uploaded any files yet.")
                         .foregroundColor(.gray)
                     Spacer()
                 } else {
@@ -79,8 +79,8 @@ struct FilesView: View {
             }) { file in
                 PDFPreviewView(url: file.url)
             }
-            .alert("Hata", isPresented: $isShowingError) {
-                Button("Tamam", role: .cancel) { }
+            .alert("Error", isPresented: $isShowingError) {
+                Button("Okay", role: .cancel) { }
             } message: {
                 Text(errorMessage)
             }
@@ -106,7 +106,7 @@ struct FilesView: View {
                 }
             } else {
                 isUploading = false
-                errorMessage = "Kullanıcı oturumu bulunamadı."
+                errorMessage = "User session not found."
                 isShowingError = true
             }
         } catch {
@@ -137,14 +137,14 @@ struct PDFPreviewView: View {
     var body: some View {
         Group {
             if isLoading {
-                ProgressView("Yükleniyor...")
+                ProgressView("Downloading...")
             } else if let error = error {
-                Text("PDF açılamadı: \(error)")
+                Text("Could not open PDF: \(error)")
                     .foregroundColor(.red)
             } else if let pdfData = pdfData, let document = PDFDocument(data: pdfData) {
                 PDFKitView(document: document)
             } else {
-                Text("PDF açılamadı (bilinmeyen hata)")
+                Text("Could not open PDF (unknown error)")
                     .foregroundColor(.red)
             }
         }
@@ -169,7 +169,7 @@ struct PDFPreviewView: View {
                     self.pdfData = data
                     self.isLoading = false
                 } else {
-                    self.error = "Bilinmeyen hata"
+                    self.error = "Unknown error"
                     self.isLoading = false
                 }
             }
@@ -193,3 +193,6 @@ struct PDFKitView: UIViewRepresentable {
     }
 }
 
+#Preview {
+    FilesView()
+}

@@ -35,10 +35,10 @@ struct LoginView: View {
                     
                     VStack(spacing: 20) {
                         TextField("", text: $email, prompt:Text("E-Mail").foregroundColor(.placeholderGrey))
-                        
                             .padding()
-                            .background(Color.white)
+                            .background(Color(.secondarySystemBackground))
                             .cornerRadius(25)
+                            .foregroundColor(.primary)
                             .textContentType(.emailAddress)
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
@@ -46,8 +46,9 @@ struct LoginView: View {
                         
                         SecureField("", text: $password, prompt:Text("Password").foregroundColor(.placeholderGrey))
                             .padding()
-                            .background(Color.white)
+                            .background(Color(.secondarySystemBackground))
                             .cornerRadius(25)
+                            .foregroundColor(.primary)
                             .textContentType(.password)
                             .padding(.horizontal)
                     }

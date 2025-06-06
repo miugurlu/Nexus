@@ -1,5 +1,5 @@
 //
-//  HomePage.swift
+//  HomeView.swift
 //  Nexus
 //
 //  Created by İbrahim Uğurlu on 31.05.2025.
@@ -12,13 +12,17 @@ enum MenuOption: String, CaseIterable, Identifiable {
     case profile = "Profile"
     case payment = "Payment"
     case files = "Files"
+    case notes = "Notes"
+    case reminders = "Reminders"
     var id: String { self.rawValue }
     var icon: String {
         switch self {
         case .home: return "house"
         case .profile: return "person"
         case .payment: return "creditcard"
-        case .files: return "doc"
+        case .files: return "folder.badge.plus"
+        case .notes: return "doc"
+        case .reminders: return "clock"
         }
     }
 }
@@ -116,6 +120,26 @@ struct HomeView: View {
                                 .foregroundColor(.pYellow)
                                 .padding(.horizontal)
                             FilesView()
+                                .padding(.top, 0)
+                        }
+                        
+                    case .notes:
+                        VStack(alignment: .leading) {
+                            Text("Notes")
+                                .font(.titleLarge)
+                                .foregroundColor(.pYellow)
+                                .padding(.horizontal)
+                            NotesView()
+                                .padding(.top, 0)
+                        }
+                        
+                    case .reminders:
+                        VStack(alignment: .leading) {
+                            Text("Reminders")
+                                .font(.titleLarge)
+                                .foregroundColor(.pYellow)
+                                .padding(.horizontal)
+                            RemindersView()
                                 .padding(.top, 0)
                         }
                     }
