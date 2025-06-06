@@ -9,6 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 import PDFKit
 import FirebaseAuth
+import QuickLook
 
 struct FilesView: View {
     @StateObject private var firebaseManager = FirebaseManager.shared
@@ -17,6 +18,10 @@ struct FilesView: View {
     @State private var errorMessage = ""
     @State private var isShowingError = false
     @State private var isUploading = false
+    @State private var previewURL: URL?
+    @State private var isLoadingPreview = false
+    @State private var retryCount = 0
+    private let maxRetries = 3
 
     var body: some View {
         NavigationView {
@@ -46,9 +51,11 @@ struct FilesView: View {
                         ForEach(firebaseManager.files) { file in
                             Button(action: {
                                 selectedFile = file
+                                retryCount = 0
+                                downloadAndPreview(file: file)
                             }) {
                                 HStack {
-                                    Image(systemName: "doc.richtext")
+                                    Image(systemName: fileIcon(for: file.name))
                                         .foregroundColor(.blue)
                                     Text(file.name)
                                         .font(.body)
@@ -62,7 +69,14 @@ struct FilesView: View {
             }
             .fileImporter(
                 isPresented: $isShowingFilePicker,
-                allowedContentTypes: [.pdf],
+                allowedContentTypes: [
+                    .pdf,
+                    .plainText,
+                    UTType(filenameExtension: "docx")!,
+                    UTType(filenameExtension: "doc")!,
+                    UTType(filenameExtension: "xlsx")!,
+                    UTType(filenameExtension: "xls")!
+                ],
                 allowsMultipleSelection: false
             ) { result in
                 switch result {
@@ -74,10 +88,25 @@ struct FilesView: View {
                     isShowingError = true
                 }
             }
-            .sheet(item: $selectedFile, onDismiss: {
-                selectedFile = nil
-            }) { file in
-                PDFPreviewView(url: file.url)
+            .sheet(item: $selectedFile) { file in
+                ZStack {
+                    if isLoadingPreview {
+                        ProgressView("Loading preview...")
+                    } else if let url = previewURL {
+                        QuickLookPreview(url: url)
+                    } else {
+                        VStack(spacing: 16) {
+                            Text("Could not load preview")
+                                .foregroundColor(.red)
+                            if retryCount < maxRetries {
+                                Button("Retry") {
+                                    downloadAndPreview(file: file)
+                                }
+                                .buttonStyle(MainButtonStyle())
+                            }
+                        }
+                    }
+                }
             }
             .alert("Error", isPresented: $isShowingError) {
                 Button("Okay", role: .cancel) { }
@@ -90,6 +119,87 @@ struct FilesView: View {
                 firebaseManager.fetchUserFiles(userId: user.uid)
             }
         }
+    }
+
+    private func fileIcon(for fileName: String) -> String {
+        let fileExtension = fileName.lowercased().split(separator: ".").last ?? ""
+        switch fileExtension {
+        case "pdf": return "doc.richtext"
+        case "doc", "docx": return "doc.text"
+        case "xls", "xlsx": return "tablecells"
+        case "txt": return "doc.text"
+        default: return "doc"
+        }
+    }
+
+    private func downloadAndPreview(file: FirebaseManager.UserFile) {
+        isLoadingPreview = true
+        previewURL = nil
+
+        // Create a URLRequest with timeout and cache policy (no Accept header)
+        var request = URLRequest(url: file.url)
+        request.timeoutInterval = 30
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        request.httpMethod = "GET"
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                isLoadingPreview = false
+
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("STATUS CODE: \(httpResponse.statusCode)")
+                    print("CONTENT-TYPE: \(httpResponse.value(forHTTPHeaderField: "Content-Type") ?? "")")
+                }
+                if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                    print("RESPONSE STRING: \(responseString)")
+                }
+
+                if let error = error {
+                    if retryCount < maxRetries {
+                        retryCount += 1
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            downloadAndPreview(file: file)
+                        }
+                        return
+                    }
+                    errorMessage = "Failed to load file: \(error.localizedDescription)"
+                    isShowingError = true
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse,
+                      (200...299).contains(httpResponse.statusCode) else {
+                    if retryCount < maxRetries {
+                        retryCount += 1
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            downloadAndPreview(file: file)
+                        }
+                        return
+                    }
+                    errorMessage = "Server error occurred"
+                    isShowingError = true
+                    return
+                }
+
+                guard let data = data else {
+                    errorMessage = "No data received"
+                    isShowingError = true
+                    return
+                }
+
+                do {
+                    let tempDir = FileManager.default.temporaryDirectory
+                    let tempFile = tempDir.appendingPathComponent(file.name)
+                    try data.write(to: tempFile)
+                    previewURL = tempFile
+                    retryCount = 0
+                } catch {
+                    errorMessage = "Failed to save file: \(error.localizedDescription)"
+                    isShowingError = true
+                }
+            }
+        }
+        task.resume()
     }
 
     private func uploadFile(url: URL) {
@@ -128,68 +238,36 @@ struct FilesView: View {
     }
 }
 
-struct PDFPreviewView: View {
+struct QuickLookPreview: UIViewControllerRepresentable {
     let url: URL
-    @State private var pdfData: Data?
-    @State private var isLoading = true
-    @State private var error: String?
-
-    var body: some View {
-        Group {
-            if isLoading {
-                ProgressView("Downloading...")
-            } else if let error = error {
-                Text("Could not open PDF: \(error)")
-                    .foregroundColor(.red)
-            } else if let pdfData = pdfData, let document = PDFDocument(data: pdfData) {
-                PDFKitView(document: document)
-            } else {
-                Text("Could not open PDF (unknown error)")
-                    .foregroundColor(.red)
-            }
+    
+    func makeUIViewController(context: Context) -> UIViewController {
+        let controller = QLPreviewController()
+        controller.dataSource = context.coordinator
+        return controller
+    }
+    
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(url: url)
+    }
+    
+    class Coordinator: NSObject, QLPreviewControllerDataSource {
+        let url: URL
+        
+        init(url: URL) {
+            self.url = url
+            super.init()
         }
-        .onAppear { startLoading() }
-        .onChange(of: url) { _ in startLoading() }
-    }
-
-    private func startLoading() {
-        pdfData = nil
-        isLoading = true
-        error = nil
-        downloadPDF()
-    }
-
-    private func downloadPDF() {
-        let task = URLSession.shared.dataTask(with: url) { data, response, err in
-            DispatchQueue.main.async {
-                if let err = err {
-                    self.error = err.localizedDescription
-                    self.isLoading = false
-                } else if let data = data {
-                    self.pdfData = data
-                    self.isLoading = false
-                } else {
-                    self.error = "Unknown error"
-                    self.isLoading = false
-                }
-            }
+        
+        func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
+            return 1
         }
-        task.resume()
-    }
-}
-
-struct PDFKitView: UIViewRepresentable {
-    let document: PDFDocument
-
-    func makeUIView(context: Context) -> PDFView {
-        let pdfView = PDFView()
-        pdfView.document = document
-        pdfView.autoScales = true
-        return pdfView
-    }
-
-    func updateUIView(_ uiView: PDFView, context: Context) {
-        uiView.document = document
+        
+        func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
+            return url as QLPreviewItem
+        }
     }
 }
 
