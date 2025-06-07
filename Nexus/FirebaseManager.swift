@@ -67,6 +67,29 @@ class FirebaseManager: ObservableObject {
         }
     }
     
+    struct ChatModel: Identifiable, Codable {
+        let id: String
+        let participants: [String]
+        let lastMessage: String
+        let time: String
+        let unreadCount: Int
+        let isTyping: Bool
+    }
+    
+    struct MessageModel: Identifiable, Codable {
+        let id: String
+        let senderId: String
+        let senderName: String
+        let text: String
+        let timestamp: Date
+    }
+    
+    struct UserModel: Identifiable, Codable {
+        let id: String
+        let name: String
+        let email: String
+    }
+    
     func uploadFile(data: Data, fileName: String, userId: String, completion: @escaping (Result<String, Error>) -> Void) {
         let storageRef = storage.reference().child("files/\(userId)/\(fileName)")
         
@@ -298,6 +321,97 @@ class FirebaseManager: ObservableObject {
         await MainActor.run {
             if let idx = self.reminders.firstIndex(where: { $0.id == reminder.id }) {
                 self.reminders[idx].isCompleted = newValue
+            }
+        }
+    }
+
+    func fetchChats(for userId: String, completion: @escaping ([ChatModel]) -> Void) {
+        db.collection("chats")
+            .whereField("participants", arrayContains: userId)
+            .order(by: "time", descending: true)
+            .addSnapshotListener { snapshot, error in
+                var chats: [ChatModel] = []
+                if let documents = snapshot?.documents {
+                    for doc in documents {
+                        let data = doc.data()
+                        if let id = doc.documentID as String?,
+                           let participants = data["participants"] as? [String],
+                           let lastMessage = data["lastMessage"] as? String,
+                           let time = data["time"] as? String,
+                           let unreadCount = data["unreadCount"] as? Int,
+                           let isTyping = data["isTyping"] as? Bool {
+                            chats.append(ChatModel(id: id, participants: participants, lastMessage: lastMessage, time: time, unreadCount: unreadCount, isTyping: isTyping))
+                        }
+                    }
+                }
+                DispatchQueue.main.async {
+                    completion(chats)
+                }
+            }
+    }
+
+    func addChat(name: String, participantIds: [String], completion: ((Error?) -> Void)? = nil) {
+        let chatData: [String: Any] = [
+            "name": name,
+            "participants": participantIds,
+            "lastMessage": "",
+            "time": "",
+            "unreadCount": 0,
+            "isTyping": false
+        ]
+        db.collection("chats").addDocument(data: chatData) { error in
+            completion?(error)
+        }
+    }
+
+    func fetchMessages(for chatId: String, completion: @escaping ([MessageModel]) -> Void) {
+        db.collection("chats").document(chatId).collection("messages").order(by: "timestamp").addSnapshotListener { snapshot, error in
+            var messages: [MessageModel] = []
+            if let documents = snapshot?.documents {
+                for doc in documents {
+                    let data = doc.data()
+                    if let id = doc.documentID as String?,
+                       let senderId = data["senderId"] as? String,
+                       let senderName = data["senderName"] as? String,
+                       let text = data["text"] as? String,
+                       let timestamp = (data["timestamp"] as? Timestamp)?.dateValue() {
+                        messages.append(MessageModel(id: id, senderId: senderId, senderName: senderName, text: text, timestamp: timestamp))
+                    }
+                }
+            }
+            DispatchQueue.main.async {
+                completion(messages)
+            }
+        }
+    }
+
+    func sendMessage(to chatId: String, senderId: String, senderName: String, text: String, completion: ((Error?) -> Void)? = nil) {
+        let messageData: [String: Any] = [
+            "senderId": senderId,
+            "senderName": senderName,
+            "text": text,
+            "timestamp": Date()
+        ]
+        db.collection("chats").document(chatId).collection("messages").addDocument(data: messageData) { error in
+            completion?(error)
+        }
+    }
+
+    func fetchUsers(completion: @escaping ([UserModel]) -> Void) {
+        db.collection("users").getDocuments { snapshot, error in
+            var users: [UserModel] = []
+            if let documents = snapshot?.documents {
+                for doc in documents {
+                    let data = doc.data()
+                    if let id = doc.documentID as String?,
+                       let name = data["name"] as? String,
+                       let email = data["email"] as? String {
+                        users.append(UserModel(id: id, name: name, email: email))
+                    }
+                }
+            }
+            DispatchQueue.main.async {
+                completion(users)
             }
         }
     }

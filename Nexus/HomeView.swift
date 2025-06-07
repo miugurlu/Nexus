@@ -10,19 +10,21 @@ import SwiftUI
 enum MenuOption: String, CaseIterable, Identifiable {
     case home = "Home"
     case profile = "Profile"
-    case payment = "Payment"
+    case chats = "Chats"
     case files = "Files"
     case notes = "Notes"
     case reminders = "Reminders"
+    case payment = "Payment"
     var id: String { self.rawValue }
     var icon: String {
         switch self {
         case .home: return "house"
         case .profile: return "person"
-        case .payment: return "creditcard"
+        case .chats: return "bubble.left.and.bubble.right"
         case .files: return "folder.badge.plus"
         case .notes: return "doc"
         case .reminders: return "clock"
+        case .payment: return "creditcard"
         }
     }
 }
@@ -103,15 +105,16 @@ struct HomeView: View {
                                 .padding(.top, 0)
                         }
                         
-                    case .payment:
+                    case .chats:
                         VStack(alignment: .leading) {
-                            Text("Payment")
+                            Text("Chats")
                                 .font(.titleLarge)
                                 .foregroundColor(.pYellow)
                                 .padding(.horizontal)
-                            PaymentView()
+                            MainChatView()
                                 .padding(.top, 0)
                         }
+                        
                         
                     case .files:
                         VStack(alignment: .leading) {
@@ -142,6 +145,17 @@ struct HomeView: View {
                             RemindersView()
                                 .padding(.top, 0)
                         }
+                        
+                    case .payment:
+                        VStack(alignment: .leading) {
+                            Text("Payment")
+                                .font(.titleLarge)
+                                .foregroundColor(.pYellow)
+                                .padding(.horizontal)
+                            PaymentView()
+                                .padding(.top, 0)
+                        }
+
                     }
                 }
                 Spacer()

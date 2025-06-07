@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseAuth
+import FirebaseFirestore
 
 struct SignUpView: View {
     @Environment(\.dismiss) private var dismiss
@@ -112,7 +113,12 @@ struct SignUpView: View {
                 let changeRequest = user.createProfileChangeRequest()
                 changeRequest.displayName = name
                 changeRequest.commitChanges { error in
-
+                    let db = Firestore.firestore()
+                    let userData: [String: Any] = [
+                        "name": name,
+                        "email": email
+                    ]
+                    db.collection("users").document(user.uid).setData(userData) { _ in }
                     alertMessage = "Successfully registered user!"
                     isRegistered = true
                     showAlert = true
