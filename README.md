@@ -5,14 +5,20 @@ Nexus, iOS için geliştirilmiş kapsamlı bir kişisel organizasyon ve üretken
 ## Ekran Görüntüleri
 
 ### Giriş ve Ana Ekran
-<img src="screenshots/login.png" width="300" alt="Giriş Ekranı">
-<img src="screenshots/homepage.png" width="300" alt="Ana Sayfa">
+<div style="display: flex; gap: 10px;">
+  <img src="screenshots/login.png" width="300" alt="Giriş Ekranı">
+  <img src="screenshots/homepage.png" width="300" alt="Ana Sayfa">
+</div>
 
 ### Temel Özellikler
-<img src="screenshots/chat.png" width="300" alt="Mesajlaşma">
-<img src="screenshots/fileviewer.png" width="300" alt="Dosya Görüntüleyici">
-<img src="screenshots/reminder.png" width="300" alt="Hatırlatıcılar">
-<img src="screenshots/profile.png" width="300" alt="Profil">
+<div style="display: flex; gap: 10px;">
+  <img src="screenshots/chat.png" width="300" alt="Mesajlaşma">
+  <img src="screenshots/fileviewer.png" width="300" alt="Dosya Görüntüleyici">
+</div>
+<div style="display: flex; gap: 10px;">
+  <img src="screenshots/reminder.png" width="300" alt="Hatırlatıcılar">
+  <img src="screenshots/profile.png" width="300" alt="Profil">
+</div>
 
 ## Özellikler
 
@@ -35,7 +41,7 @@ Nexus, iOS için geliştirilmiş kapsamlı bir kişisel organizasyon ve üretken
 
 1. Projeyi klonlayın:
    ```bash
-   git clone https://github.com/kullaniciadi/Nexus.git
+   git clone https://github.com/miugurlu/Nexus.git
    ```
 
 2. Proje dizinine gidin:
