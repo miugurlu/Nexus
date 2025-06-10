@@ -5,14 +5,14 @@ Nexus, iOS için geliştirilmiş kapsamlı bir kişisel organizasyon ve üretken
 ## Ekran Görüntüleri
 
 ### Giriş ve Ana Ekran
-![Giriş Ekranı](screenshots/login.png)
-![Ana Sayfa](screenshots/homepage.png)
+<img src="screenshots/login.png" width="300" alt="Giriş Ekranı">
+<img src="screenshots/homepage.png" width="300" alt="Ana Sayfa">
 
 ### Temel Özellikler
-![Mesajlaşma](screenshots/chat.png)
-![Dosya Görüntüleyici](screenshots/fileviewer.png)
-![Hatırlatıcılar](screenshots/reminder.png)
-![Profil](screenshots/profile.png)
+<img src="screenshots/chat.png" width="300" alt="Mesajlaşma">
+<img src="screenshots/fileviewer.png" width="300" alt="Dosya Görüntüleyici">
+<img src="screenshots/reminder.png" width="300" alt="Hatırlatıcılar">
+<img src="screenshots/profile.png" width="300" alt="Profil">
 
 ## Özellikler
 
