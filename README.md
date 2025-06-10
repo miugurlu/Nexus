@@ -81,4 +81,4 @@ Bu proje MIT lisansı altında lisanslanmıştır.
 
 ## İletişim
 
-- Proje Linki: [https://github.com/ibrahimugurlu/Nexus](https://github.com/ibrahimugurlu/Nexus)
+- Proje Linki: [https://github.com/miugurlu/Nexus](https://github.com/miugurlu/Nexus)
